@@ -5,14 +5,17 @@ import { redirect } from 'next/navigation';
 
 import { env } from '@/env.mjs';
 
+const strava = StravaProvider({
+  clientId: env.STRAVA_CLIENT_ID,
+  clientSecret: env.STRAVA_CLIENT_SECRET,
+});
+if (strava.authorization != null && typeof strava.authorization !== 'string' && strava.authorization.params != null) {
+  strava.authorization.params.scope = 'activity:read_all';
+}
+
 export const options: AuthOptions = {
   secret: env.NEXTAUTH_SECRET,
-  providers: [
-    StravaProvider({
-      clientId: env.STRAVA_CLIENT_ID,
-      clientSecret: env.STRAVA_CLIENT_SECRET,
-    }),
-  ],
+  providers: [strava],
 
   callbacks: {
     async jwt({ token, account }) {
