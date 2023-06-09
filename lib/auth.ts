@@ -44,6 +44,7 @@ export function getServerSession() {
 export async function requireSession(redirectTo = '/') {
   const session = await getServerSession();
   if (session == null) redirect(redirectTo);
+  return session;
 }
 
 declare module 'next-auth' {
