@@ -1,13 +1,14 @@
-import 'next-auth/next';
+import { type Metadata } from 'next';
 import { Work_Sans } from 'next/font/google';
 
 import './globals.css';
 
 const font = Work_Sans({ subsets: ['latin'] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Runner',
   description: 'Keep track of your progress',
+  manifest: '/manifest.webmanifest',
 };
 
 interface RootLayoutProps {

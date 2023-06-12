@@ -7,12 +7,12 @@ export const runtime = 'edge';
 
 // Image metadata
 export const size = {
-  width: 180,
-  height: 180,
+  width: 32,
+  height: 32,
 };
 export const contentType = 'image/png';
 
 // Image generation
-export default function AppleIcon() {
+export default function Icon() {
   return new ImageResponse(<Favicon size={size.width} />, { ...size });
 }
