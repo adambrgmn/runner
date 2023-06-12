@@ -1,9 +1,9 @@
 import 'next-auth/next';
-import { Inter } from 'next/font/google';
+import { Work_Sans } from 'next/font/google';
 
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const font = Work_Sans({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Runner',
@@ -17,7 +17,7 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={font.className}>{children}</body>
     </html>
   );
 }

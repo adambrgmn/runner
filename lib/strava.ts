@@ -1,3 +1,4 @@
+import { endOfYear, isValid, startOfYear } from 'date-fns';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -53,8 +54,31 @@ export class StravaClient {
     const activities = await this.#get('/athlete/activities', params);
     return ActivitySchema.array().parse(activities);
   }
+
+  async activitiesThisYear<T extends z.infer<typeof ActivitySchema>>(
+    year: Date = new Date(),
+    type: z.infer<typeof SportType>,
+  ) {
+    const after = startOfYear(year).getTime() / 1_000;
+    const before = endOfYear(year).getTime() / 1_000;
+    const per_page = 50;
+
+    let page = 1;
+    let lastResponse = await this.activities({ after, before, page, per_page });
+
+    const activities = lastResponse;
+
+    while (lastResponse.length === per_page) {
+      page += 1;
+      lastResponse = await this.activities({ after, before, page, per_page });
+      activities.push(...lastResponse);
+    }
+
+    return activities.filter((activity) => activity.sport_type === type);
+  }
 }
 
+export type Athlete = z.infer<typeof AthleteSchema>;
 export const AthleteSchema = z.object({
   id: z.number(),
   username: z.string().nullable(),
@@ -117,8 +141,19 @@ export const SportType = z.enum([
   'Yoga',
 ]);
 
+export type Activity = z.infer<typeof ActivitySchema>;
 export const ActivitySchema = z.object({
   id: z.number(),
+  start_date: z.string().transform((date) => {
+    const d = new Date(date);
+    if (isValid(d)) return d;
+    throw new Error(`Invalid date: ${date}`);
+  }),
+  start_date_local: z.string().transform((date) => {
+    const d = new Date(date);
+    if (isValid(d)) return d;
+    throw new Error(`Invalid date: ${date}`);
+  }),
   athlete: AthleteSchema.pick({ id: true }),
   name: z.string(),
   distance: z.number(),
@@ -126,6 +161,7 @@ export const ActivitySchema = z.object({
   elapsed_time: z.number(),
   total_elevation_gain: z.number(),
   sport_type: SportType.nullable(),
+  average_speed: z.number(),
 });
 
 export const PaginationSchema = z.object({
