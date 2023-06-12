@@ -51,7 +51,11 @@ export function StatisticsTable({ data }: StatisticsTableProps) {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} className="whitespace-nowrap px-2 py-1 text-right font-normal text-stone-700">
+                <th
+                  key={header.id}
+                  className="whitespace-nowrap px-2 py-1 text-right font-normal text-stone-700"
+                  scope="col"
+                >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
@@ -62,13 +66,16 @@ export function StatisticsTable({ data }: StatisticsTableProps) {
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
+                const isFirstCell = cell.column.id === row.getVisibleCells()[0].column.id;
+                const Type = isFirstCell ? 'th' : 'td';
                 return (
-                  <td
+                  <Type
                     key={cell.id}
-                    className="whitespace-nowrap border-r px-2 py-1 text-right tabular-nums text-stone-400 last:border-r-0"
+                    className="whitespace-nowrap border-r px-2 py-1 text-right font-normal tabular-nums text-stone-400 last:border-r-0"
+                    scope={isFirstCell ? 'row' : undefined}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+                  </Type>
                 );
               })}
             </tr>
