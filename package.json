@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.4.0",
+    "@tanstack/react-table": "^8.9.2",
     "@types/node": "20.2.5",
     "@types/react": "18.2.9",
     "@types/react-dom": "18.2.4",

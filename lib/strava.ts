@@ -5,11 +5,20 @@ import { z } from 'zod';
 import { getServerSession } from './auth';
 
 export class StravaClient {
+  static #clients = new Map<string, StravaClient>();
+
   static async create() {
     const session = await getServerSession();
     if (session == null) throw new Error('No session found');
 
-    return new StravaClient(session.access_token);
+    if (this.#clients.has(session.access_token)) {
+      return this.#clients.get(session.access_token)!;
+    }
+
+    const client = new StravaClient(session.access_token);
+    this.#clients.set(session.access_token, client);
+
+    return client;
   }
 
   #accessToken: string;
@@ -35,6 +44,10 @@ export class StravaClient {
     });
 
     if (!response.ok || response.status > 299 || response.status < 200) {
+      response
+        .json()
+        .catch(() => response.text())
+        .then(console.error);
       throw new Error(`Request failed: ${response.status} ${response.statusText}`);
     }
 
@@ -52,9 +65,13 @@ export class StravaClient {
   }
 
   async activitiesForYear(year: Date = new Date(), type: z.infer<typeof SportType>) {
-    const after = startOfYear(year).getTime() / 1_000;
-    const before = endOfYear(year).getTime() / 1_000;
-    const per_page = 100;
+    return this.allActivities(endOfYear(year), startOfYear(year), type);
+  }
+
+  async allActivities(beforeDate: Date, afterDate: Date, type: z.infer<typeof SportType>) {
+    const before = beforeDate.getTime() / 1_000;
+    const after = afterDate.getTime() / 1_000;
+    const per_page = 200;
 
     let page = 1;
     let lastResponse = await this.activities({ after, before, page, per_page });
