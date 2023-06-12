@@ -44,8 +44,8 @@ export function StatisticsTable({ data }: StatisticsTableProps) {
   const table = useReactTable({ data: data, columns, getCoreRowModel: getCoreRowModel() });
 
   return (
-    <div className="w-auto table-auto border-collapse overflow-x-scroll text-sm">
-      <h3 className="mb-4 text-base font-medium text-stone-700">Statistics</h3>
+    <div className="relative w-auto table-auto border-collapse overflow-x-scroll pb-4 text-sm">
+      <h3 className="sticky left-0 mb-4 text-base font-medium text-stone-700">Statistics</h3>
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
