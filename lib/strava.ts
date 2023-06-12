@@ -34,10 +34,6 @@ export class StravaClient {
       headers: { Authorization: this.#bearer },
     });
 
-    if (response.status === 401) {
-      redirect('/api/auth/refresh');
-    }
-
     if (!response.ok || response.status > 299 || response.status < 200) {
       throw new Error(`Request failed: ${response.status} ${response.statusText}`);
     }

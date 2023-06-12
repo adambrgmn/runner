@@ -19,14 +19,40 @@ export const options: AuthOptions = {
 
   callbacks: {
     async jwt({ token, account }) {
-      if (account == null) return token;
-
-      if (account.access_token != null) {
+      if (account && account.access_token != null && account.refresh_token != null && account.expires_at != null) {
         token.access_token = account.access_token;
+        token.refresh_token = account.refresh_token;
+        token.expires_at = account.expires_at;
         return token;
       }
 
-      throw new Error('No access token received from auth provider');
+      const now = Date.now() / 1_000;
+      const isExpired = token.expires_at != null && token.expires_at < now;
+
+      if (isExpired) {
+        try {
+          const url = new URL('https://www.strava.com/oauth/token');
+          url.searchParams.append('client_id', env.STRAVA_CLIENT_ID);
+          url.searchParams.append('client_secret', env.STRAVA_CLIENT_SECRET);
+          url.searchParams.append('grant_type', 'refresh_token');
+          url.searchParams.append('refresh_token', token.refresh_token);
+          const response = await fetch(url.toString(), { method: 'POST' });
+          const data = await response.json();
+
+          token.access_token = data.access_token;
+          token.refresh_token = data.refresh_token ?? token.refresh_token;
+          token.expires_at = data.expires_at;
+
+          console.log('New access token refreshed');
+          return token;
+        } catch (error) {
+          console.error('Failed to refresh access token');
+          console.error(error);
+          return { ...token, error: 'RefreshAccessTokenError' as const };
+        }
+      }
+
+      return token;
     },
     async session({ session, token }) {
       session.access_token = token.access_token;
@@ -56,5 +82,7 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     access_token: string;
+    refresh_token: string;
+    expires_at: number;
   }
 }
