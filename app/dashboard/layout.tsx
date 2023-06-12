@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { requireSession } from '@/lib/auth';
 
@@ -25,9 +26,13 @@ function Header({ name, profile }: HeaderProps) {
   return (
     <header className="flex items-center gap-3 p-5">
       {profile != null ? (
-        <Image src={profile} alt={name ?? ''} width={36} height={36} className="rounded-full" />
+        <Link href="/dashboard/settings">
+          <Image src={profile} alt={name ?? ''} width={36} height={36} className="rounded-full" />
+        </Link>
       ) : null}
-      <span className="text-sm text-stone-500">Hello {name ?? 'there'} 👋</span>
+      <Link href="/dashboard/settings" className="text-sm text-stone-500">
+        Hello {name ?? 'there'} 👋
+      </Link>
     </header>
   );
 }

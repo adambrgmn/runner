@@ -1,17 +1,19 @@
 import { differenceInDays, differenceInWeeks, endOfYear, startOfYear, subDays } from 'date-fns';
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { ProgressBar } from '@/components/ProgressBar';
+import { getGoal } from '@/lib/goal';
 import { StravaClient } from '@/lib/strava';
 import { average, positive, toKm, toMinPerKm, total } from '@/lib/utils';
 
 import { Statistics } from './Statistics';
 
-const PER_WEEK = 20 * 1_000; // 20 km per week
-const GOAL = 52 * PER_WEEK; // 52 weeks, 20 km per week
-
 export default async function Dashboard() {
   const now = new Date();
+
+  const goal = getGoal();
+  if (goal == null) redirect('/dashboard/settings');
 
   const client = await StravaClient.create();
   const runs = await client.activitiesForYear(now, 'Run');
@@ -25,11 +27,11 @@ export default async function Dashboard() {
   const year_progress = current_day / days_in_year;
   const weeks_left = positive(differenceInWeeks(now, endOfYear(now)));
 
-  const expected_distance = GOAL * year_progress;
-  const distance_per_week = (GOAL - total_distance) / weeks_left;
+  const expected_distance = goal * year_progress;
+  const distance_per_week = (goal - total_distance) / weeks_left;
   const delta = total_distance - expected_distance;
-  const progress = total_distance / GOAL;
-  const expected_progress = expected_distance / GOAL;
+  const progress = total_distance / goal;
+  const expected_progress = expected_distance / goal;
 
   const progress_size = 200;
 
@@ -59,7 +61,7 @@ export default async function Dashboard() {
           🏃‍♂️
         </span>
         <p className="flex flex-col items-center text-xl font-medium text-stone-700">{toKm(total_distance)}</p>
-        <p className="text-xs text-stone-500">Goal: {toKm(GOAL)}</p>
+        <p className="text-xs text-stone-500">Goal: {toKm(goal)}</p>
       </div>
 
       <div className="grid grid-cols-2 items-stretch gap-6">
