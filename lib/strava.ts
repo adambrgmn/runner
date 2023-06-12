@@ -55,13 +55,10 @@ export class StravaClient {
     return ActivitySchema.array().parse(activities);
   }
 
-  async activitiesThisYear<T extends z.infer<typeof ActivitySchema>>(
-    year: Date = new Date(),
-    type: z.infer<typeof SportType>,
-  ) {
+  async activitiesForYear(year: Date = new Date(), type: z.infer<typeof SportType>) {
     const after = startOfYear(year).getTime() / 1_000;
     const before = endOfYear(year).getTime() / 1_000;
-    const per_page = 50;
+    const per_page = 100;
 
     let page = 1;
     let lastResponse = await this.activities({ after, before, page, per_page });
