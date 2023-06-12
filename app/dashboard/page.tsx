@@ -19,7 +19,7 @@ export default async function Dashboard() {
   const runs = await client.activitiesForYear(now, 'Run');
 
   const total_distance = total(runs, (run) => run.distance);
-  const average_distance = total_distance / runs.length;
+  const average_distance = average(runs, (run) => run.distance);
   const average_pace = average(runs, (run) => run.average_speed);
 
   const current_day = differenceInDays(now, subDays(startOfYear(now), 1));

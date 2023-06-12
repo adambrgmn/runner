@@ -2,7 +2,7 @@ import { getYear } from 'date-fns';
 
 import { StatisticsTable } from '@/components/StatisticsTable';
 import { StravaClient } from '@/lib/strava';
-import { average, groupBy, total } from '@/lib/utils';
+import { average, groupBy, median, total } from '@/lib/utils';
 
 interface StatisticsProps {
   now: Date;
@@ -19,6 +19,8 @@ export async function Statistics({ now }: StatisticsProps) {
           title: year,
           average_speed: average(runs, (run) => run.average_speed),
           average_distance: average(runs, (run) => run.distance),
+          median_speed: median(runs, (run) => run.average_speed),
+          median_distance: median(runs, (run) => run.distance),
           total_distance: total(runs, (run) => run.distance),
           total_runs: runs.length,
         } as const),

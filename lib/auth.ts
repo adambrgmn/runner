@@ -2,6 +2,7 @@ import NextAuth, { AuthOptions } from 'next-auth';
 import { getServerSession as _getServerSession } from 'next-auth/next';
 import StravaProvider from 'next-auth/providers/strava';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 import { env } from '@/env.mjs';
 
@@ -37,10 +38,10 @@ export const options: AuthOptions = {
           url.searchParams.append('grant_type', 'refresh_token');
           url.searchParams.append('refresh_token', token.refresh_token);
           const response = await fetch(url.toString(), { method: 'POST' });
-          const data = await response.json();
+          const data = RefreshTokenSchema.parse(await response.json());
 
           token.access_token = data.access_token;
-          token.refresh_token = data.refresh_token ?? token.refresh_token;
+          token.refresh_token = data.refresh_token;
           token.expires_at = data.expires_at;
 
           console.log('New access token refreshed');
@@ -86,3 +87,9 @@ declare module 'next-auth/jwt' {
     expires_at: number;
   }
 }
+
+const RefreshTokenSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string(),
+  expires_at: z.number(),
+});

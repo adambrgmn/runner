@@ -36,7 +36,7 @@ export default function Goal({ searchParams }: GoalProps) {
                 type="string"
                 inputMode="decimal"
                 defaultValue={goal != null ? goal / 1_000 : 520}
-                className="flex-1 border-r border-stone-400 bg-transparent p-2 text-right leading-none text-stone-700"
+                className="flex-1 rounded-none border-r border-stone-400 bg-transparent p-2 text-right leading-none text-stone-700"
                 required
                 aria-invalid={reason != null}
                 aria-describedby={reason != null ? 'goal-error' : undefined}

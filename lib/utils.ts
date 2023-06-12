@@ -15,6 +15,14 @@ export function average<T, Fn extends (item: T) => number>(items: T[], fn: Fn) {
   return total / items.length;
 }
 
+export function median<T, Fn extends (item: T) => number>(items: T[], fn: Fn) {
+  const sorted = items.slice().sort((a, b) => fn(a) - fn(b));
+  const half = Math.floor(sorted.length / 2);
+
+  if (sorted.length % 2) return fn(sorted[half]);
+  return (fn(sorted[half - 1]) + fn(sorted[half])) / 2;
+}
+
 export function total<T, Fn extends (item: T) => number>(items: T[], fn: Fn) {
   return items.reduce((acc, item) => acc + fn(item), 0);
 }
@@ -37,4 +45,8 @@ export function toMinPerKm(meterPerSecond: number, skipUnit = false) {
 
 export function positive(value: number) {
   return value > 0 ? value : value * -1;
+}
+
+export function cx(...classes: (string | undefined | null | boolean)[]) {
+  return classes.filter(Boolean).join(' ');
 }

@@ -2,12 +2,14 @@
 
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
-import { toKm, toMinPerKm } from '@/lib/utils';
+import { cx, toKm, toMinPerKm } from '@/lib/utils';
 
 interface YearStats {
   title: string;
   average_speed: number;
   average_distance: number;
+  median_speed: number;
+  median_distance: number;
   total_distance: number;
   total_runs: number;
 }
@@ -21,23 +23,31 @@ export function StatisticsTable({ data }: StatisticsTableProps) {
   const columns = [
     column.accessor('title', {
       header: '',
-      cell: (props) => <span className="text-stone-700">{props.getValue()}</span>,
+      cell: (props) => props.getValue(),
     }),
     column.accessor('average_speed', {
       header: 'avg. pace',
-      cell: (props) => <span>{toMinPerKm(props.getValue(), true)}</span>,
+      cell: (props) => toMinPerKm(props.getValue(), true),
     }),
     column.accessor('average_distance', {
       header: 'avg. distance',
-      cell: (props) => <span>{toKm(props.getValue(), true)}</span>,
+      cell: (props) => toKm(props.getValue(), true),
+    }),
+    column.accessor('median_speed', {
+      header: 'med. pace',
+      cell: (props) => toMinPerKm(props.getValue(), true),
+    }),
+    column.accessor('median_distance', {
+      header: 'med. distance',
+      cell: (props) => toKm(props.getValue(), true),
     }),
     column.accessor('total_distance', {
       header: 'tot. dist.',
-      cell: (props) => <span>{toKm(props.getValue(), true)}</span>,
+      cell: (props) => toKm(props.getValue(), true),
     }),
     column.accessor('total_runs', {
       header: 'tot. runs',
-      cell: (props) => <span>{props.getValue()}</span>,
+      cell: (props) => props.getValue(),
     }),
   ];
 
@@ -67,14 +77,23 @@ export function StatisticsTable({ data }: StatisticsTableProps) {
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
                 const isFirstCell = cell.column.id === row.getVisibleCells()[0].column.id;
+                const isLastCell = cell.column.id === row.getVisibleCells()[row.getVisibleCells().length - 1].column.id;
+
                 const Type = isFirstCell ? 'th' : 'td';
+                const children = flexRender(cell.column.columnDef.cell, cell.getContext());
+
                 return (
                   <Type
                     key={cell.id}
-                    className="whitespace-nowrap border-r px-2 py-1 text-right font-normal tabular-nums text-stone-400 last:border-r-0"
+                    className={cx(
+                      'whitespace-nowrap bg-white p-0 font-normal tabular-nums text-stone-400',
+                      isFirstCell ? 'sticky left-0 text-stone-700' : 'text-stone-500',
+                    )}
                     scope={isFirstCell ? 'row' : undefined}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <span className={cx('block w-full border-r px-2 py-1 text-right', isLastCell && 'border-r-0')}>
+                      {children}
+                    </span>
                   </Type>
                 );
               })}
