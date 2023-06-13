@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import { Work_Sans } from 'next/font/google';
 
+import { SessionCheck } from './SessionCheck';
 import './globals.css';
 
 const font = Work_Sans({ subsets: ['latin'] });
@@ -18,7 +19,10 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={font.className}>{children}</body>
+      <body className={font.className}>
+        <SessionCheck />
+        {children}
+      </body>
     </html>
   );
 }
