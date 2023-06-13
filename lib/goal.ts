@@ -1,5 +1,5 @@
+import { addYears } from 'date-fns';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 const GOAL_COOKIE_NAME = 'runner_goal';
 
@@ -20,6 +20,7 @@ export function setGoal(goal: number) {
     name: GOAL_COOKIE_NAME,
     value: goal.toString(),
     secure: process.env.NODE_ENV === 'production',
+    expires: addYears(new Date(), 1),
   });
 }
 
