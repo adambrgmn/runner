@@ -29,8 +29,8 @@ export const options: AuthOptions = {
 
       const now = Date.now() / 1_000;
       const isExpired = token.expires_at != null && token.expires_at < now;
-
       if (isExpired) {
+        console.log({ isExpired, ...token });
         try {
           const url = new URL('https://www.strava.com/oauth/token');
           url.searchParams.append('client_id', env.STRAVA_CLIENT_ID);
@@ -40,10 +40,7 @@ export const options: AuthOptions = {
           const response = await fetch(url.toString(), { method: 'POST' });
           const data = RefreshTokenSchema.parse(await response.json());
 
-          token.access_token = data.access_token;
-          token.refresh_token = data.refresh_token;
-          token.expires_at = data.expires_at;
-
+          Object.assign(token, data);
           console.log('New access token refreshed');
           return token;
         } catch (error) {
