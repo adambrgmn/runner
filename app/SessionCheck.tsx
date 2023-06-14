@@ -15,6 +15,8 @@ export function SessionCheck() {
       isPendingRef.current = false;
     });
   }, 30_000);
+
+  return undefined;
 }
 
 function useInterval(callback: () => void, delay: number | null): void {
