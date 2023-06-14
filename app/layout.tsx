@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: 'Runner',
     statusBarStyle: 'black-translucent',
+    startupImage: [
+      '/assets/startup/apple-touch-startup-image-768x1004.png',
+      {
+        url: '/assets/startup/apple-touch-startup-image-1536x2008.png',
+        media: '(device-width: 768px) and (device-height: 1024px)',
+      },
+    ],
   },
   referrer: 'origin-when-cross-origin',
   keywords: ['Running', 'Habits'],
