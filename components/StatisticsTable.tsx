@@ -8,6 +8,7 @@ interface YearStats {
   title: string;
   average_speed: number;
   average_distance: number;
+  average_distance_per_week: number;
   median_speed: number;
   median_distance: number;
   total_distance: number;
@@ -31,6 +32,10 @@ export function StatisticsTable({ data }: StatisticsTableProps) {
     }),
     column.accessor('average_distance', {
       header: 'avg. distance',
+      cell: (props) => toKm(props.getValue(), true),
+    }),
+    column.accessor('average_distance_per_week', {
+      header: 'avg. distance/w',
       cell: (props) => toKm(props.getValue(), true),
     }),
     column.accessor('median_speed', {
