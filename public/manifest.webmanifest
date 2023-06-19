@@ -4,9 +4,10 @@
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#d1fae5",
+  "theme_color": "#d1fae5",
   "description": "Keep track of your progress",
   "icons": [
-    { "src": "/assets/icons/icon-192.png", "type": "image/png", "sizes": "192x192" },
-    { "src": "/assets/icons/icon-512.png", "type": "image/png", "sizes": "512x512" }
+    { "src": "/assets/icons/icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any maskable" },
+    { "src": "/assets/icons/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any maskable" }
   ]
 }

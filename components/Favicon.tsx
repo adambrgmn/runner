@@ -2,7 +2,7 @@ export function Favicon({ size }: { size: number }) {
   return (
     <div
       style={{
-        fontSize: size * 0.75,
+        fontSize: size * 0.65,
         background: 'rgb(209, 250, 229)',
         width: '100%',
         height: '100%',
