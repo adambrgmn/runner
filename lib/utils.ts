@@ -10,9 +10,9 @@ export function groupBy<T>(items: T[], key: (item: T) => string) {
   return groups;
 }
 
-export function average<T, Fn extends (item: T) => number>(items: T[], fn: Fn) {
+export function average<T, Fn extends (item: T) => number>(items: T[], fn: Fn, length?: (items: T[]) => number) {
   const total = items.reduce((acc, item) => acc + fn(item), 0);
-  return total / items.length;
+  return total / (length ? length(items) : items.length);
 }
 
 export function median<T, Fn extends (item: T) => number>(items: T[], fn: Fn) {

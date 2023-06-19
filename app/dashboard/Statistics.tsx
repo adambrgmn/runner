@@ -1,4 +1,4 @@
-import { getWeek, getYear } from 'date-fns';
+import { getWeek, getYear, isSameYear } from 'date-fns';
 
 import { StatisticsTable } from '@/components/StatisticsTable';
 import { StravaClient } from '@/lib/strava';
@@ -13,20 +13,18 @@ export async function Statistics({ now }: StatisticsProps) {
   const activities = await client.allActivities(now, new Date('2010-01-01'), 'Run');
 
   const data = Object.entries(groupBy(activities, (activity) => getYear(activity.start_date_local).toString()))
-    .sort(([keyA], [keyB]) => Number(keyB) - Number(keyA))
+    .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
     .map(([year, runs]) => {
       const total_distance = total(runs, (run) => run.distance);
       const total_duration = total(runs, (run) => run.moving_time);
       const average_speed = total_distance / total_duration;
 
-      let per_week = Object.values(groupBy(runs, (run) => getWeek(new Date(run.start_date_local)).toString()));
-      if (year === getYear(now).toString()) {
-        per_week = Array.from({ length: getWeek(now) }, (_, i) => per_week[i] || []);
-      } else {
-        per_week = Array.from({ length: 52 }, (_, i) => per_week[i] || []);
-      }
-
-      const average_distance_per_week = average(per_week, (runs) => total(runs, (run) => run.distance));
+      const per_week = Object.values(groupBy(runs, (run) => getWeek(new Date(run.start_date_local)).toString()));
+      const average_distance_per_week = average(
+        per_week,
+        (runs) => total(runs, (run) => run.distance),
+        () => (isSameYear(new Date(year), now) ? getWeek(now) : 52),
+      );
 
       return {
         title: year,
