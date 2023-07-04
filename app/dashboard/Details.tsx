@@ -9,7 +9,8 @@ export async function Details({ date, goal }: { date: Date; goal: number }) {
 
   const total_distance = total(runs, (run) => run.distance);
   const average_distance = average(runs, (run) => run.distance);
-  const average_pace = average(runs, (run) => run.average_speed);
+  const total_duration = total(runs, (run) => run.moving_time);
+  const average_speed = total_distance / total_duration;
 
   const current_day = differenceInDays(date, subDays(startOfYear(date), 1));
   const days_in_year = differenceInDays(endOfYear(date), subDays(startOfYear(date), 1));
@@ -24,7 +25,7 @@ export async function Details({ date, goal }: { date: Date; goal: number }) {
     <div className="grid grid-cols-2 items-stretch gap-6">
       <Card title={toKm(positive(delta))} subtitle={delta > 0 ? 'ahead of goal' : 'behind goal'} bg="bg-emerald-100" />
       <Card title={toKm(distance_per_week) + '/w'} subtitle="to reach goal" bg="bg-amber-100" />
-      <Card title={toMinPerKm(average_pace)} subtitle="avg. pace" bg="bg-rose-100" />
+      <Card title={toMinPerKm(average_speed)} subtitle="avg. pace" bg="bg-rose-100" />
       <Card title={toKm(average_distance)} subtitle="avg. distance" bg="bg-teal-100" />
     </div>
   );

@@ -7,7 +7,12 @@ import { toKm, total } from '@/lib/utils';
 
 const PROGRESS_SIZE = 200;
 
-export async function Summary({ date, goal }: { date: Date; goal: number }) {
+type SummaryProps = {
+  date: Date;
+  goal: number;
+};
+
+export async function Summary({ date, goal }: SummaryProps) {
   const client = await StravaClient.create();
   const runs = await client.activitiesForYear(date, 'Run');
 
@@ -47,6 +52,7 @@ export async function Summary({ date, goal }: { date: Date; goal: number }) {
           🏃‍♂️
         </span>
         <p className="flex flex-col items-center text-xl font-medium text-stone-700">{toKm(total_distance)}</p>
+        <p className="text-xs text-stone-500">Expected: {toKm(expected_distance)}</p>
         <p className="text-xs text-stone-500">Goal: {toKm(goal)}</p>
       </div>
     </Fragment>
