@@ -1,4 +1,4 @@
-import { differenceInDays, differenceInWeeks, endOfYear, startOfYear, subDays } from 'date-fns';
+import { differenceInWeeks, endOfYear, getISOWeek, startOfYear } from 'date-fns';
 
 import { StravaClient } from '@/lib/strava';
 import { average, positive, toKm, toMinPerKm, total } from '@/lib/utils';
@@ -12,18 +12,21 @@ export async function Details({ date, goal }: { date: Date; goal: number }) {
   const total_duration = total(runs, (run) => run.moving_time);
   const average_speed = total_distance / total_duration;
 
-  const current_day = differenceInDays(date, subDays(startOfYear(date), 1));
-  const days_in_year = differenceInDays(endOfYear(date), subDays(startOfYear(date), 1));
-  const year_progress = current_day / days_in_year;
+  const current_week = getISOWeek(date);
   const weeks_left = positive(differenceInWeeks(date, endOfYear(date)));
+  const weeks_in_year = positive(differenceInWeeks(startOfYear(date), endOfYear(date)));
 
-  const expected_distance = goal * year_progress;
+  const expected_distance_end_of_week = goal * (current_week / weeks_in_year);
   const distance_per_week = (goal - total_distance) / weeks_left;
-  const delta = total_distance - expected_distance;
+  const distance_delta = total_distance - expected_distance_end_of_week;
 
   return (
     <div className="grid grid-cols-2 items-stretch gap-6">
-      <Card title={toKm(positive(delta))} subtitle={delta > 0 ? 'ahead of goal' : 'behind goal'} bg="bg-emerald-100" />
+      <Card
+        title={(distance_delta > 0 ? '+' : '-') + toKm(positive(distance_delta))}
+        subtitle="after this week"
+        bg="bg-emerald-100"
+      />
       <Card title={toKm(distance_per_week) + '/w'} subtitle="to reach goal" bg="bg-amber-100" />
       <Card title={toMinPerKm(average_speed)} subtitle="avg. pace" bg="bg-rose-100" />
       <Card title={toKm(average_distance)} subtitle="avg. distance" bg="bg-teal-100" />
