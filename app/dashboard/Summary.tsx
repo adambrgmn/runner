@@ -23,7 +23,7 @@ export async function Summary({ date, goal }: SummaryProps) {
   const year_progress = current_day / days_in_year;
 
   const expected_distance = goal * year_progress;
-  const progress = total_distance / goal;
+  const progress = (total_distance / goal) * 1;
   const expected_progress = expected_distance / goal;
 
   return (
@@ -42,8 +42,8 @@ export async function Summary({ date, goal }: SummaryProps) {
               { progress: progress, className: 'text-teal-300', trackWidth: 5 },
               {
                 progress: expected_progress,
-                className: expected_progress > progress ? 'text-rose-100' : 'text-teal-200',
-                trackWidth: expected_progress > progress ? 3 : 5,
+                className: expected_progress > progress ? 'text-rose-100' : 'text-teal-100',
+                trackWidth: 2,
               },
             ]}
           />
